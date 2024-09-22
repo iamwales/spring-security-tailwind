@@ -111,6 +111,38 @@ Next setup the plugin to install node and npm, run `npm install` and `npm run bu
 </plugin>
 ```
 
+
+## Spring Security
+
+For Spring Security, we did a simple user authentication using `@Configuration` class and `InMemoryUserDetailsManager` from Spring Security to manage the user session.
+
+This Bean manages the request, we set it to permit the `main.css` and make the login page `/login` 
+```java
+@Bean
+SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+return http
+        .authorizeHttpRequests(auth ->
+                auth.requestMatchers("main.css")
+                        .permitAll().anyRequest().authenticated())
+        .formLogin(form -> form.loginPage("/login").permitAll())
+        .build();
+}
+```
+
+This Bean creates an in memory user with username `Wales` and password `Password`
+```java
+ @Bean
+UserDetailsService userDetailsService() {
+    var user = User.withUsername("Wales").password("{noop}password").build();
+
+    return new InMemoryUserDetailsManager(user);
+}
+```
+
+Run the maven application and go to `http://localhost:8080/`, it would take you to the login page `/login`.
+
+You can log in using the credentials we created previously.
+
 ## Resources
 
 - [Tailwind CSS Docs](https://tailwindcss.com/docs)
